@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class PistonController : MonoBehaviour
@@ -7,12 +8,14 @@ public class PistonController : MonoBehaviour
     private bool isDragging = false;
     private Rigidbody rb;
     private Vector3 offset;
-    private float dragSpeed = 2000f;
+    private float dragSpeed = 200f;
     private bool controller = false;
     [Header(" Elements ")]
     [Tooltip(" Correct Position Object ")]
     [SerializeField]
     private GameObject correctPositionObject; // Serialized field for correct position GameObject
+    [SerializeField]
+    private AudioSource correctSound;
     #endregion
     #region Unity Callbacks
 
@@ -58,7 +61,7 @@ public class PistonController : MonoBehaviour
     {
         if (correctPositionObject != null)
         {
-            float threshold = 0.1f;
+            float threshold = 0.05f;
 
             if (controller == false)
             {
@@ -68,7 +71,7 @@ public class PistonController : MonoBehaviour
                 float zDistance = Mathf.Abs(transform.position.z - correctPositionObject.transform.position.z);
 
                 // Check if both x and y positions are approximately equal to the correct positions
-                if (xDistance < threshold && yDistance < threshold && zDistance < threshold)
+                if ((xDistance < threshold) && (yDistance < threshold) && (zDistance < threshold))
                 {
                     Debug.Log("Object is in the correct position!");
                     
@@ -79,8 +82,9 @@ public class PistonController : MonoBehaviour
                     }
 
                     correctPositionObject.SetActive(false);
-                    this.gameObject.transform.position = correctPositionObject.transform.position;
-
+                    StartCoroutine(MoveToTargetAndSnap(correctPositionObject.transform.position, threshold));
+                    //this.gameObject.transform.position = correctPositionObject.transform.position;
+                    correctSound.Play();
                     controller = true;
 
                     // Count plus
@@ -88,11 +92,11 @@ public class PistonController : MonoBehaviour
                 }
 
                 // Check if the distance is within the range (0.1 to 0.4) to activate/deactivate the correct position object
-                if ((xDistance > 0.11 && xDistance < 0.5) || (yDistance > 0.11 && yDistance < 0.5) || (zDistance > 0.11 && zDistance < 0.5))
+                if ((xDistance > 0.11 && xDistance < 0.4) || (yDistance > 0.11 && yDistance < 0.4) || (zDistance > 0.11 && zDistance < 0.4))
                 {
                     correctPositionObject.SetActive(true);
                 }
-                else if (xDistance > 0.6f || yDistance > 0.6f || zDistance > 0.6f)
+                else if (xDistance > 0.5f || yDistance > 0.5f || zDistance > 0.5f)
                 {
                     correctPositionObject.SetActive(false);
                 }
@@ -116,4 +120,19 @@ public class PistonController : MonoBehaviour
         }
     }
     #endregion
+
+    private IEnumerator MoveToTargetAndSnap(Vector3 targetPosition, float threshold)
+    {
+        float elapsedTime = 0f;
+        float duration = 1.0f;
+
+        Vector3 initialPosition = transform.position;
+
+        while (elapsedTime < duration)
+        {
+            transform.position = Vector3.Lerp(initialPosition, targetPosition, elapsedTime / duration);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+    }
 }

@@ -7,6 +7,11 @@ public class GameManager : MonoBehaviour
 {
     public static int count;
     [SerializeField] GameObject userInformation;
+    private void Start()
+    {
+        userInformation.SetActive(false);
+        count = 0;
+    }
     void Update()
     {
         if (count >= 10)
@@ -16,6 +21,7 @@ public class GameManager : MonoBehaviour
     }
     public void Restart()
     {
+       
         SceneManager.LoadScene(0);
     }
 }
