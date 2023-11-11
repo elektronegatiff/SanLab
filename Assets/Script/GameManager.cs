@@ -7,6 +7,7 @@ public class GameManager : MonoBehaviour
 {
     public static int count;
     [SerializeField] GameObject userInformation;
+    [SerializeField] GameObject closeInformation;
     private void Start()
     {
         userInformation.SetActive(false);
@@ -23,5 +24,9 @@ public class GameManager : MonoBehaviour
     {
        
         SceneManager.LoadScene(0);
+    }
+    public void CloseInformation()
+    {
+        closeInformation.SetActive(false);
     }
 }

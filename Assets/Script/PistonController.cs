@@ -59,64 +59,64 @@ public class PistonController : MonoBehaviour
     }
     private void CheckCorrectPosition()
     {
-        if (correctPositionObject != null)
+        if (correctPositionObject == null)
         {
-            float threshold = 0.05f;
+            Debug.LogWarning("Correct position object not assigned!");
+            return;
+        }
 
-            if (controller == false)
+        float threshold = 0.05f;
+
+        if (controller == false)
+        {
+            float xDistance = Mathf.Abs(transform.position.x - correctPositionObject.transform.position.x);
+            float yDistance = Mathf.Abs(transform.position.y - correctPositionObject.transform.position.y);
+            float zDistance = Mathf.Abs(transform.position.z - correctPositionObject.transform.position.z);
+
+          
+
+            if ((xDistance < threshold) && (yDistance < threshold) && (zDistance < threshold))
             {
-                // Calculate the distance in both x and y axes
-                float xDistance = Mathf.Abs(transform.position.x - correctPositionObject.transform.position.x);
-                float yDistance = Mathf.Abs(transform.position.y - correctPositionObject.transform.position.y);
-                float zDistance = Mathf.Abs(transform.position.z - correctPositionObject.transform.position.z);
+                Debug.Log("Object is in the correct position!");
 
-                // Check if both x and y positions are approximately equal to the correct positions
-                if ((xDistance < threshold) && (yDistance < threshold) && (zDistance < threshold))
+                if (gameObject.CompareTag("PistonPart"))
                 {
-                    Debug.Log("Object is in the correct position!");
-                    
-                    // Trigger rotation animation if the object is a "PistonPart"
-                    if (this.gameObject.tag == "PistonPart")
-                    {
-                        this.gameObject.GetComponent<Animator>().SetTrigger("Rotation");
-                    }
-
-                    correctPositionObject.SetActive(false);
-                    StartCoroutine(MoveToTargetAndSnap(correctPositionObject.transform.position, threshold));
-                    //this.gameObject.transform.position = correctPositionObject.transform.position;
-                    correctSound.Play();
-                    controller = true;
-
-                    // Count plus
-                    GameManager.count++;
+                    var pistonAnimator = gameObject.GetComponent<Animator>();
+                    pistonAnimator.SetTrigger("Rotation");
                 }
 
-                // Check if the distance is within the range (0.1 to 0.4) to activate/deactivate the correct position object
-                if ((xDistance > 0.11 && xDistance < 0.4) || (yDistance > 0.11 && yDistance < 0.4) || (zDistance > 0.11 && zDistance < 0.4))
-                {
-                    correctPositionObject.SetActive(true);
-                }
-                else if (xDistance > 0.5f || yDistance > 0.5f || zDistance > 0.5f)
-                {
-                    correctPositionObject.SetActive(false);
-                }
+                correctPositionObject.SetActive(false);
+                StartCoroutine(MoveToTargetAndSnap(correctPositionObject.transform.position, threshold));
+                correctSound.Play();
+                controller = true;
+
+                // Count plus
+                GameManager.count++;
             }
-            else
+            Debug.Log("xDistance: " + xDistance);
+            // Check if the distance is within the range (0.1 to 0.4) to activate/deactivate the correct position object
+            
+            if (xDistance >= 0.2f || yDistance >= 0.2f || zDistance >= 0.2f)
             {
-                // Play idle animation and decrement count if the object is a "PistonPart"
-                if (this.gameObject.tag == "PistonPart")
-                {
-                    this.gameObject.GetComponent<Animator>().Play("Idle");
-                }
-
-                GameManager.count--;
-                controller = false;
+                correctPositionObject.SetActive(false);
+            }
+            else if ((xDistance > 0.051f && xDistance < 0.2f) || (yDistance > 0.051f && yDistance < 0.2f) || (zDistance > 0.051f && zDistance < 0.2f))
+            {
                 correctPositionObject.SetActive(true);
             }
         }
         else
         {
-            Debug.LogWarning("Correct position object not assigned!");
+            // Play idle animation and decrement count if the object is a "PistonPart"
+            if (gameObject.CompareTag("PistonPart"))
+            {
+                var pistonAnimator = gameObject.GetComponent<Animator>();
+                pistonAnimator.Play("Idle");
+            }
+
+            GameManager.count--;
+            controller = false;
+            correctPositionObject.SetActive(true);
         }
     }
     #endregion
