@@ -2,6 +2,9 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
+    /// <summary>
+    /// Camera Controller ~ Position and Rotation
+    /// </summary>
     #region Definitions
     [Header(" SerializeField ")]
     [Space(3)]
@@ -15,6 +18,9 @@ public class CameraController : MonoBehaviour
     [SerializeField] float moveSpeed = 5f;
     #endregion
     #region Unity Metods
+    /// <summary>
+    /// Update
+    /// </summary>
     void Update()
     {
         // Get input for movement
@@ -39,6 +45,10 @@ public class CameraController : MonoBehaviour
     }
     #endregion
     #region Move Camera
+    /// <summary>
+    /// Position
+    /// </summary>
+    /// <param name="moveDirection"></param>
     void MoveCamera(Vector3 moveDirection)
     {
         // Translate the camera position based on the input and move speed//
@@ -46,6 +56,10 @@ public class CameraController : MonoBehaviour
     }
     #endregion
     #region Rotate Camera
+    /// <summary>
+    /// Rotate 
+    /// </summary>
+    /// <param name="mouseX"></param>
     void RotateCamera(float mouseX)
     {
         // Rotate the camera around the target point based on mouse movement

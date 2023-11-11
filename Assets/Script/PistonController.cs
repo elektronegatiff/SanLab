@@ -3,6 +3,9 @@ using UnityEngine;
 
 public class PistonController : MonoBehaviour
 {
+    /// <summary>
+    /// Piston Child Add ~ Drag, Controller etc.
+    /// </summary>
     #region Definitions
     [Header(" Settings ")]
     private bool isDragging = false;
@@ -12,8 +15,10 @@ public class PistonController : MonoBehaviour
     private bool controller = false;
     [Header(" Elements ")]
     [Tooltip(" Correct Position Object ")]
+    [Space(3)]
     [SerializeField]
     private GameObject correctPositionObject; // Serialized field for correct position GameObject
+    [Tooltip(" Correct Sound ")]
     [SerializeField]
     private AudioSource correctSound;
     #endregion
@@ -72,9 +77,6 @@ public class PistonController : MonoBehaviour
             float xDistance = Mathf.Abs(transform.position.x - correctPositionObject.transform.position.x);
             float yDistance = Mathf.Abs(transform.position.y - correctPositionObject.transform.position.y);
             float zDistance = Mathf.Abs(transform.position.z - correctPositionObject.transform.position.z);
-
-          
-
             if ((xDistance < threshold) && (yDistance < threshold) && (zDistance < threshold))
             {
                 Debug.Log("Object is in the correct position!");
@@ -93,9 +95,8 @@ public class PistonController : MonoBehaviour
                 // Count plus
                 GameManager.count++;
             }
-            Debug.Log("xDistance: " + xDistance);
-            // Check if the distance is within the range (0.1 to 0.4) to activate/deactivate the correct position object
-            
+            // Check if the distance is within the range (0.051 to 0.2) to activate/deactivate the correct position object
+
             if (xDistance >= 0.2f || yDistance >= 0.2f || zDistance >= 0.2f)
             {
                 correctPositionObject.SetActive(false);
@@ -120,7 +121,7 @@ public class PistonController : MonoBehaviour
         }
     }
     #endregion
-
+    #region Move To Target Slow
     private IEnumerator MoveToTargetAndSnap(Vector3 targetPosition, float threshold)
     {
         float elapsedTime = 0f;
@@ -135,4 +136,5 @@ public class PistonController : MonoBehaviour
             yield return null;
         }
     }
+    #endregion
 }
